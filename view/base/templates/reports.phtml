@@ -1,0 +1,206 @@
+<?php
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+
+use Jajuma\PotMatomoReports\Block\Reports;
+use Magento\Framework\Escaper;
+
+/** @var Reports $block */
+/** @var Escaper $escaper */
+
+if ($block->isParentEnable()) {
+    $viewModel = $block->getViewModel();
+    $supportWidgetTypes = $viewModel->getSupportWidgetTypes();
+}
+
+?>
+<div class="<?= $block->getBlockId() ?><?= $block->isParentEnable() ? '' : ' parent-module-disabled' ?>">
+    <div id="<?= $block->getBlockId() ?>-wrapper">
+        <div class="powertoys-loading-wrapper">
+            <div class="powertoys-dots">
+                <div class="powertoys-dot"></div>
+                <div class="powertoys-dot"></div>
+                <div class="powertoys-dot"></div>
+            </div>
+        </div>
+        <?php if (!$block->isParentEnable()): ?>
+            <span class="powertoys-widget-title"><?= 'Matomo Analytics' ?></span>
+            <a class="no-parent-module" target="blank" href="https://www.jajuma.de/en/jajuma-develop/extensions/matomo-analytics-extension-for-magento-2">
+                <img alt="Matomo Analytics" src="<?= $block->getViewFileUrl('Jajuma_PotMatomoReports::images/parent-module-image.png') ?>"/>
+                <?= 'Please install and enable' ?><br>
+                <?= 'Matomo Analytics' ?>
+            </a>
+        <?php else: ?>
+            <?php if ($viewModel->validateMatomoConfig()): ?>
+                <div class="widget-types">
+                    <span class="powertoys-widget-title"><?= 'Matomo Analytics' ?></span>
+                    <?php foreach ($supportWidgetTypes as $key => $supportWidgetType): ?>
+                        <button class="<?= !$key ? 'active' : '' ?> widget-type-button"
+                                type="button"
+                                onclick="loadMatomoWidget(this, '<?= $viewModel->getWidgetUrl($supportWidgetType['moduleToWidgetize']) ?>')">
+                            <span class="powertoys-action-item"><?= $supportWidgetType['label'] ?></span>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+                <div class="widget-content">
+                    <iframe id="matomoWidgetIframe" width="100%" height="350" src="<?= $viewModel->getWidgetUrl('Live') ?>"></iframe>
+                </div>
+            <?php else: ?>
+                <div class="pot-messages">
+                    <?= 'For using the Matomo Dashboard integration, please configure your access token in JaJuMa -> Matomo -> Configuration -> Dashboard View Access Token' ?>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+</div>
+<script>
+    let containerWrapper = document.getElementById("<?= $block->getBlockId() ?>-wrapper");
+    function loadMatomoWidget(elm, widgetUrl) {
+        var matomoWidgetIframe = document.getElementById('matomoWidgetIframe');
+        containerWrapper.classList.add("powertoysloading");
+        if (matomoWidgetIframe) {
+            var buttons = document.getElementsByClassName('widget-type-button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            elm.classList.add('active');
+
+            matomoWidgetIframe.src = widgetUrl;
+            setTimeout(function () {
+                containerWrapper.classList.remove("powertoysloading");
+            }, 1500);
+        }
+    }
+</script>
+<style>
+    .powertoys-dashboard-widgets .widget-item[data-widget-id="matomo_reports"] {
+        width: 360px;
+        min-width: 360px;
+        position: relative;
+        filter: invert(0.9);
+    }
+
+    .jajumaLightMode .powertoys-dashboard-widgets .widget-item[data-widget-id="matomo_reports"] {
+        filter: unset;
+    }
+
+    .powertoys-dashboard-widgets .widget-item[data-widget-id="matomo_reports"] .matomo_reports>b {
+        display: none;
+    }
+
+    .widget-item.widget-item-matomo_reports {
+        overflow: hidden;
+    }
+
+    .widget-item.widget-item-matomo_reports .powertoys-widget-title {
+        margin-bottom: 0;
+        margin-right: auto;
+        background: #3152A0;
+    }
+
+    .widget-item.widget-item-matomo_reports .powertoys-action-item {
+        min-height: unset;
+        font-size: 12px;
+    }
+
+    .widget-item.widget-item-matomo_reports .widget-content {
+        overflow: hidden;
+    }
+
+    .powertoys-dashboard-widgets iframe#matomoWidgetIframe {
+        overflow: auto;
+        border: 0;
+        -ms-zoom: 0.75;
+        -moz-transform: scale(0.75);
+        -moz-transform-origin: 0 0;
+        -o-transform: scale(0.75);
+        -o-transform-origin: 0 0;
+        -webkit-transform: scale(0.75);
+        -webkit-transform-origin: 0 0;
+        width: 445px;
+        height: 205px;
+        margin-top: -10px;
+    }
+
+    #<?= $block->getBlockId() ?>-wrapper .widget-types {
+        display: flex;
+        margin-bottom: 5px;
+        overflow: auto;
+        justify-content: space-around;
+        gap: 20px;
+        padding-right: 25px;
+    }
+
+    #<?= $block->getBlockId() ?>-wrapper .widget-types .active {
+        background: var(--jajuma-develop-light-module, #FFE9A3);
+    }
+
+    #<?= $block->getBlockId() ?>-wrapper .widget-types button {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        border-radius: 6px;
+        font-size: 12px;
+        padding: 2px 4px;
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+        box-shadow: none;
+        background-color: transparent;
+    }
+
+    .widget-item-matomo_reports .pot-messages {
+        margin-top: 10px;
+    }
+
+    /* No parent extension */
+
+    <?php if (!$block->isParentEnable()): ?>
+        .powertoys-dashboard-widgets .widget-item[data-widget-id="matomo_reports"] {
+            filter: invert(0) !important;
+            background: #333;
+        }
+
+        .widget-item.widget-item-matomo_reports .powertoys-widget-title {
+            margin-bottom: 10px;
+        }
+
+        .widget-item.widget-item-matomo_reports .powertoys-widget-title {
+            background: #efb600;
+            color: #333;
+        }
+    <?php endif; ?>
+
+    .matomo_reports.parent-module-disabled #matomo_reports-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .widget-item-matomo_reports .no-parent-module {
+        display: flex;
+        text-decoration: none;
+        z-index: 1;
+        align-items: center;
+        gap: 10px;
+        color: #efefef;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .widget-item-matomo_reports .no-parent-module img {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        transition: .3s ease transform;
+    }
+
+    .widget-item-matomo_reports .no-parent-module:hover img {
+        transform: translateY(-3px);
+    }
+
+</style>

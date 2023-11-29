@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+-->
+
+<powertoys xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Jajuma_PowerToys:etc/jajuma_powertoys.xsd">
+    <dashboard id="matomo_reports" class="Jajuma\PotMatomoReports\Block\Reports">
+        <label translate="true">Matomo Reports</label>
+        <arguments>
+            <argument name="enable">true</argument>
+            <argument name="template">Jajuma_PotMatomoReports::reports.phtml</argument>
+            <argument name="lazyload">true</argument>
+            <argument name="cache_lifetime">30</argument>
+        </arguments>
+    </dashboard>
+</powertoys>
