@@ -14,8 +14,7 @@
     "require": {
         "magewirephp/magewire": "^1.10",
         "magewirephp/magewire-requirejs": "^1.1",
-        "jajuma/power-toys": "^1.0",
-        "jajuma/module-matomoanalytics": "^2.0"
+        "jajuma/power-toys": "^1.0"
     },
     "autoload": {
         "psr-4": {
