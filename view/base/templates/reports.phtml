@@ -15,7 +15,8 @@ if ($block->isParentEnable()) {
     $viewModel = $block->getViewModel();
     $supportWidgetTypes = $viewModel->getSupportWidgetTypes();
 }
-
+$powerToysHelper = $this->helper(\Jajuma\PowerToys\Helper\Data::class);
+$nonce = $powerToysHelper->getNonce();
 ?>
 <div class="<?= $block->getBlockId() ?><?= $block->isParentEnable() ? '' : ' parent-module-disabled' ?>">
     <div id="<?= $block->getBlockId() ?>-wrapper">
@@ -56,7 +57,7 @@ if ($block->isParentEnable()) {
         <?php endif; ?>
     </div>
 </div>
-<script>
+<script <?= $nonce ? 'nonce="' . $nonce . '"' : '' ?>>
     let containerWrapper = document.getElementById("<?= $block->getBlockId() ?>-wrapper");
     function loadMatomoWidget(elm, widgetUrl) {
         var matomoWidgetIframe = document.getElementById('matomoWidgetIframe');
